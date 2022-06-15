@@ -12,36 +12,48 @@ namespace HW6_Skillbox
         static void AddNewNote()
         {
             string path = "newStaff.txt";
+            char key = 'д';
+            int ID = 0;
+
+            if (File.Exists(path)) 
+            {
+                ID = File.ReadAllLines(path).Length;
+            } 
+            
             using (StreamWriter sw = new StreamWriter (path, true, Encoding.Unicode))
             {
-                char key = 'д';
-                int ID = 0;
-
-                    //string [] data = sw.ReadAllLines(path);
-                    //StringBuilder sb = new StringBuilder(data.Length);
-                    //ID = sb[0];
-             
                 do 
                 {
                     string note = string.Empty;
                     note += $"{++ID}#";
+                    
                     string dateTime = DateTime.Now.ToShortDateString();
                     note += $"{dateTime}#";
+                    
                     Console.WriteLine("\nФ.И.О.");
                     string fullName = Console.ReadLine();
                     note += $"{fullName}#";
+                    
                     Console.WriteLine("Возраст");
                     string age = Convert.ToString(Console.ReadLine());
                     note += $"{age}#";
+                    
                     Console.WriteLine("Рост");
                     string height = Console.ReadLine();
                     note += $"{height}#";
+                    
                     Console.WriteLine("Дата рождения");
-                    DateTime birthday = DateTime.Parse(Console.ReadLine());
+                    DateTime birthday;
+                    while (!DateTime.TryParse(Console.ReadLine(), out birthday))
+                    {
+                        Console.WriteLine("Неверный формат даты. Введите в формате ДД.ММ.ГГГГ:");
+                    }
                     note += $"{birthday.ToShortDateString()}#";
+                    
                     Console.WriteLine("Место рождения");
                     string placeOfBirthday = Console.ReadLine();
                     note += $"{placeOfBirthday}\t";
+                    
                     sw.WriteLine(note);
                     Console.Write("Продолжить н/д?");
                     key = Console.ReadKey(true).KeyChar;
@@ -51,30 +63,40 @@ namespace HW6_Skillbox
 
         static void ReadFile(string path)
         {
-            using(StreamReader sr = new StreamReader(path, Encoding.Unicode))
+            if(!File.Exists(path))
             {
-                string line;
-                while ((line = sr.ReadLine())!= null)
+                Console.WriteLine("Файла не существует. Нажмите 2 для создания файла и добавления новой заметки.");
+            }
+            else
+            {
+                 using(StreamReader sr = new StreamReader(path, Encoding.Unicode))
                 {
-                   string[]data = line.Split('#');
-                   foreach (var item in data) Console.WriteLine(item);
+                    string line;
+                    while ((line = sr.ReadLine())!= null)
+                    {
+                        string[]data = line.Split('#');
+                        foreach (var item in data) Console.WriteLine(item);
+                    };
                 }
             }
-        }
+               
+        }   
+    
+
         static void Main(string[] args)
         {
-            
             Console.WriteLine("Нажмите 1 для вывода данных на экран; 2 - для добавления новой записи");
-                       
+            string path = "newStaff.txt";
+            
             if (Console.ReadLine() == "1")
-            {   
-                Console.WriteLine();
-                ReadFile("newStaff.txt");
-            } else
+            {
+                 ReadFile(path);
+            }
+            else 
             {
                 Console.WriteLine("Введите следующие данные сотрудника");
                 AddNewNote();
-            }
+            }  
             
             Console.ReadKey();
             Console.WriteLine();
